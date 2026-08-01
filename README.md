@@ -2,13 +2,13 @@
 
 **A ~40B, India-first, dense model trained from scratch via progressive growth (1B→3B→8B→20B→40B) on a 15T-token budget.** This document fixes *how much* of each kind of data the model sees (mixture) and *when* it sees it (curriculum), across pre-training, SFT, and RL. Every share is defended against a benchmark and against the real supply behind it, with the gap between the two stated plainly rather than hidden.
 
-> **Status: DRAFT for review.** Every share is a **hypothesis**, provisional until a 1B/3B proxy tests it (§9). A nano-scale proxy has already been run as proof-of-method, and its numbers are in §9.2. This README is the standalone spine; fuller derivations exist as a separate evidence trail.
+> Every share here is a **hypothesis** grounded in evidence, not a guess. The mixture below applies the direction from a **nano-scale proxy** (§9.2) — the largest experiment this project's compute (a single Mac) allows; the 1B/3B runs that would normally validate a mixture (§9.1) are out of reach here. That is a real limit, but a bounded one: what a proxy this small can report is a *direction* (which lane is over- or under-funded), not an absolute 40B loss — and mixture *ranking* is largely scale-invariant, which is the premise the RegMix and data-mixing-law results rest on ([RegMix](https://arxiv.org/abs/2407.01492)). So the direction below is expected to transfer; the exact shares are not claimed to. This README is the standalone spine; fuller derivations exist as a separate evidence trail.
 
 ---
 
 ## 0. Method
 
-The mixture is **not** a survey of available data. It is a reverse projection of the capabilities we have decided the model must win, ranked, each tied to the benchmark that measures it:
+The mixture is **not** a survey of available data. It is a reverse projection of the capabilities the model must win, ranked, each tied to the benchmark that measures it:
 
 | Rank | Capability | Benchmark it must win |
 |---|---|---|
@@ -23,24 +23,24 @@ The mixture is **not** a survey of available data. It is a reverse projection of
 
 Six steps: rank capabilities → set a defended share per lane → convert share to tokens-needed → posit real *unique* supply → compute the gap (repetition epochs and/or synthesis %) → read off the starved slots.
 
-**The anti-wishful-accounting rule:** every share that exceeds its plausible real unique supply must say so and name its filler: epochs or synthesis. A lane handed a large share with almost no real data behind it is a defect, not a decision. We state, for example, that ~55% of the Indic lane is hard-gated translation rather than hiding it inside the 22% headline.
+**The anti-wishful-accounting rule:** every share that exceeds its plausible real unique supply must say so and name its filler: epochs or synthesis. A lane handed a large share with almost no real data behind it is a defect, not a decision. So, for example, ~55% of the Indic lane is called out as hard-gated translation rather than hidden inside the 22% headline.
 
 ---
 
 ## 1. The pre-training mixture
 
-**H_A and H_B** name the two candidate Indic-lane sizes the spec deliberately leaves open. **H_A** ("Hypothesis A") is this table's headline bet: **22% Indic**. **H_B** is a leaner rival: **13% Indic**, saving scarce native tokens for the anneal (§5). They differ *only* in the Indic share (the rest goes to web). The nano-proxy (§9.2) tests these aggregate ratios; it supports 22% > 13% and flags web as over-funded relative to code/reasoning, but **only Arm B at 3B settles the fork.**
+**H_A and H_B** name the two candidate Indic-lane sizes the spec deliberately leaves open. **H_A** ("Hypothesis A") is this table's headline bet: **22% Indic**. **H_B** is a leaner rival: **13% Indic**, saving scarce native tokens for the anneal (§5). They differ *only* in the Indic share (the rest goes to web). The nano-proxy (§9.2) tests these aggregate ratios; it supports 22% > 13% and flagged web as over-funded relative to code/reasoning — which this table now reflects (web trimmed into code/reasoning, §9.2) — but **only Arm B at 3B settles the 22-vs-13 fork.**
 
-Shares are **scale-transferable ratios**, not token counts we defend to the digit. RegMix's finding is that mixture *ranking* is largely rank-invariant across scale, so we set ratios once and prove them cheaply ([RegMix](https://arxiv.org/abs/2407.01492)). Shares are of **our-tokenizer tokens**; at Indic fertility ~1.6–1.8 vs English ~1.2, a 22% Indic *token* share delivers only ~⅔ the *content* share (stated, not hidden).
+Shares are **scale-transferable ratios**, not token counts defended to the digit. RegMix's finding is that mixture *ranking* is largely rank-invariant across scale, so the ratios are set once and proven cheaply ([RegMix](https://arxiv.org/abs/2407.01492)). Shares are of **the target tokenizer's tokens**; at Indic fertility ~1.6–1.8 vs English ~1.2, a 22% Indic *token* share delivers only ~⅔ the *content* share (stated, not hidden).
 
 | Lane | % | Tokens | Benchmark | Honest filler (real unique supply) |
 |---|---|---|---|---|
-| Web (general) | 45% | 6.75T | MMLU, ARC, HellaSwag | **~1 epoch**, the only ≥1× lane (Nemotron-CC 4.4T unique) |
-| _↳ edu-classified subset_ | _⅓ of web_ | _~2.25T_ | MMLU, ARC | _a slice of the 45% above (not extra): the FineWeb-Edu-style high-quality portion that carries the knowledge load_ |
+| Web (general) | 39% | 5.85T | MMLU, ARC, HellaSwag | **~1 epoch** (5.85T of 6.3T+ unique) — the only lane with no repetition or synthesis |
+| _↳ edu-classified subset_ | _⅓ of web_ | _~1.95T_ | MMLU, ARC | _a slice of the 39% above (not extra): the FineWeb-Edu-style high-quality portion that carries the knowledge load_ |
 | **Indic** | 22% | 3.3T | MILU, IndicGenBench | **~95% translated/synthetic**; verified-native ≈64B (§3) |
-| Code | 16% | 2.4T | HumanEval+, LiveCodeBench | **~2.7 epochs** of 900B unique (StarCoder2 itself ran 3.7–4.8) |
+| Code | 20% | 3.0T | HumanEval+, LiveCodeBench | **~3.3 epochs** of 900B unique (StarCoder2 itself ran 3.7–4.8) |
 | Math | 6% | 0.9T | GSM8K, MATH, MathArena | **~2–2.5 epochs** of ~350–450B (MegaMath ∪ Nemotron-CC-Math) |
-| **Reasoning traces** *(new)* | 4% | 0.6T | MMLU-Pro, BBH → GSM8K/MATH | **~90% distilled**; open long-CoT pool is single-digit-to-tens of B |
+| **Reasoning traces** *(new)* | 6% | 0.9T | MMLU-Pro, BBH → GSM8K/MATH | **~93% distilled**; open long-CoT pool is single-digit-to-tens of B |
 | Science | 2% | 0.3T | GPQA, MMLU-STEM | **~2–3 epochs** of peS2o 57B + synthesis on the remainder |
 | India-first curated | 3% | 0.45T | bespoke cultural eval | **mostly synthetic** exam/civic + 100% of a tens-of-B real scrape |
 | Agentic | 2% | 0.3T | BFCL v4, τ-bench | **~fully synthetic**, verifier-gated (real supply ~hundreds of M) |
@@ -48,7 +48,7 @@ Shares are **scale-transferable ratios**, not token counts we defend to the digi
 
 Long-context is deliberately **not a lane**: it is a late re-pack of already-counted tokens (§5), and a separate lane would double-count.
 
-**What changed vs the week-3 prior, and why:** code 17→16 (R2's 15–25% band, low-middle, leave floor for Indic); science 4→2 (real supply is only 57B; the old 4% was undeclared wishful accounting); India-first 5→3 (scrape ceiling is tens of B, not 0.75T); reasoning added at 4% (NVIDIA front-loading: pre-training needs a *broad* reasoning prior, unrecoverable if deferred); web 44→45 absorbs the remainder.
+**What changed vs the week-3 prior, and why:** code 17→20 (R2's 15–25% band, upper-middle after the nano flagged code under-funded, §9.2); science 4→2 (real supply is only 57B; the old 4% was undeclared wishful accounting); India-first 5→3 (scrape ceiling is tens of B, not 0.75T); reasoning added at 6% (NVIDIA front-loading — pre-training needs a *broad* reasoning prior, unrecoverable if deferred — sized up after nano Arm E); web 44→39 (trimmed into code/reasoning per the nano, which flagged it over-funded).
 
 ---
 
@@ -56,16 +56,16 @@ Long-context is deliberately **not a lane**: it is a late re-pack of already-cou
 
 | Lane | Needed | Real unique supply | Epochs | Synthesis (named) | Verdict |
 |---|---|---|---|---|---|
-| Web | 6.75T | 6.3T+ (Nemotron-CC + DCLM + FineWeb-Edu) | ~1.0× | 0% new | **healthy** |
+| Web | 5.85T | 6.3T+ (Nemotron-CC + DCLM + FineWeb-Edu) | ~0.9× | 0% new | **healthy** |
 | **Indic** | 3.3T | ~90–150B native + 162.7B Sangraha-translated | native ≤4× | ~95% (IndicTrans2 + LLM) | **STARVED (native)** |
-| Code | 2.4T | ~900B (Stack v2) | ~2.7× | 0% (StarCoder2 precedent) | repetition-lane |
+| Code | 3.0T | ~900B (Stack v2) | ~3.3× | 0% (StarCoder2 precedent) | repetition-lane |
 | Math | 0.9T | ~350–450B | ~2.2× | already-synth inside MegaMath | repetition-lane |
-| **Reasoning** | 0.6T | ~10–30B | >4× impossible | ~90% R1-distill | **STARVED** |
+| **Reasoning** | 0.9T | ~10–30B | >4× impossible | ~93% R1-distill | **STARVED** |
 | **Science** | 0.3T | 57B (peS2o) | ~2–3× | ~45–60% textbook-gen | **STARVED** |
 | **India-first** | 0.45T | tens of B (legal ~7B, Varta ~9B) | scrape 1× | ~90% exam/civic-gen | **STARVED** |
 | **Agentic** | 0.3T | hundreds of M | negligible | ~99% APIGen-MT-gen | **STARVED** |
 
-**Five starved slots** (Indic-native, reasoning, science, India-first, agentic) are where cleaning + generation effort is aimed (§8). Only Web is a true ≥1× lane. Code and Math are honest repetition lanes with published precedent, needing an epoch count, not a synthesis flag.
+**Five starved slots** (Indic-native, reasoning, science, India-first, agentic) are where cleaning + generation effort is aimed (§8). Web is the only lane seen ~once (no repetition or synthesis). Code and Math are honest repetition lanes with published precedent, needing an epoch count, not a synthesis flag.
 
 ---
 
@@ -92,7 +92,7 @@ Tiers 3–5 collapse to the assignment's canonical **"translated + synthetic"** 
 Each of the assignment's named slots is sized per stage and pointed at the datasets that fill it:
 
 - **Agentic:** pretrain 2%/0.3T (format-prior seed: JSON/API-docs/schemas) + SFT ~22% + primary RLVR environment. Real supply is ~hundreds of M tokens (xLAM 60K, APIGen-MT 5K, ToolACE), so the slot is **generated**: APIGen-MT-style *blueprint → simulate → execute → verify* trajectories, execution-gated. Indian tools (UPI/IRCTC/DigiLocker/GST) don't exist publicly → generated with mock envs.
-- **Reasoning:** pretrain 4%/0.6T (broad short+medium traces) + SFT ~15% (long-CoT cold-start) + anneal (gold). ~90% distilled (OpenThoughts, R1-distill ~800K). Front-loading asymmetry: **broad/diverse in pretrain, longest/highest-quality reserved for SFT+anneal.** Gate = answer verification (SymPy/tests).
+- **Reasoning:** pretrain 6%/0.9T (broad short+medium traces) + SFT ~15% (long-CoT cold-start) + anneal (gold). ~93% distilled (OpenThoughts, R1-distill ~800K). Front-loading asymmetry: **broad/diverse in pretrain, longest/highest-quality reserved for SFT+anneal.** Gate = answer verification (SymPy/tests).
 - **Long-context:** **not a lane; a late re-pack stage** (S3–S4, anneal-aligned). Ramp 4K→32K→128K→256K, RoPE ABF, **40/60 rule** (40% at max length, 60% shorter). Packing sources ranked: code repos > books/science > Indian judgments (~7B, best real Indic long-doc) > stitched Indic. Honest: long-context is **mostly English/code**; Indic long-doc supply is thin, and the spec says so.
 
 ---
@@ -133,16 +133,16 @@ Stage token budgets (stated assumption): S0 ~0.5T · S1 ~1.5T · S2 ~4T · S3 ~5
 
 | Lane | S0 | S1 | S2 | S3 | S4 |
 |---|---|---|---|---|---|
-| Web | 68 | 57 | 48.5 | 40 | 39 |
+| Web | 62 | 51 | 42.5 | 34 | 33 |
 | Indic | 10 | 12 | 15 | 26 | 30 |
-| Code | 14 | 18 | 20 | 16 | 12 |
+| Code | 18 | 22 | 24 | 20 | 16 |
 | Math | 6 | 7 | 8 | 6 | 4 |
-| Reasoning | 1 | 2 | 3 | 5 | 5 |
+| Reasoning | 3 | 4 | 5 | 7 | 7 |
 | Science | 1 | 2 | 3 | 2 | 1 |
 | India-first | 0 | 1 | 1 | 3 | 6 |
 | Agentic | 0 | 1 | 1.5 | 2 | 3 |
 
-Token-weighted average recovers H_A within ~0.4pp on every lane; floors honored in every column; web recedes 68→39 as Indic climbs 10→30. Each rung boundary is a **go/no-go gate** (function-preservation + fundamentals probe). *Per-stage weights are provisional; the proxy tests only the aggregate ratios, not the stage schedule.*
+Token-weighted average recovers the §1 mixture within ~0.4pp on every lane; floors honored in every column; web recedes 62→33 as Indic climbs 10→30. Each rung boundary is a **go/no-go gate** (function-preservation + fundamentals probe). *Per-stage weights are provisional; the proxy tests only the aggregate ratios, not the stage schedule.*
 
 ---
 
@@ -177,13 +177,13 @@ No share is trusted at 40B until a proxy has tested it. Five arms, each with a n
 |---|---|---|---|
 | **A** | are the H_A ratios right at all? | 16×1B, Dirichlet mixtures, RegMix regression | predicted-best beats H_A by >1σ → adopt |
 | **B** ⭐ | **22% Indic (H_A) vs ~13% + native-to-anneal (H_B)?** | 2×3B×100B, matched, both anneal + SFT probe | adopt H_B iff Indic gate within 1pt *and* English/reasoning gains ≥1.5pt. *Nano ran this multi-seed, trilingual (hi/bn/ta): H_A preferred but not sharply separated (§9.2); 3B settles it.* |
-| **C** | code 16% right? | 3×1B, code 12/16/20% | pick the knee (expect flat 16–20) |
+| **C** | code 20% right? | 3×1B, code 16/20/24% | pick the knee (expect flat 18–22) |
 | **D** | translated-tier tolerance? | 3×1B, translated 40/55/70% of Indic | max translated share with <1pt native degradation |
-| **E** | does the new reasoning lane earn its tokens? | 3×1B, reasoning 0/4/8% | confirm 4%>0% post-SFT. *Nano ran 0/4/8%: composite rises monotonically, but 4% is still sub-guard → consider 4→6% (§9.2 R4).* |
+| **E** | does reasoning at 6% earn its tokens? | 3×1B, reasoning 4/6/8% | confirm 6% post-SFT. *Nano ran 0/4/8%: composite rises monotonically, 4% still sub-guard → §1 adopted 6% (§9.2 R4).* |
 
-Arm B resolves the fork the spec deliberately leaves open. Small→large mixture transfer is not our assumption but a published, validated method: [Data Mixing Laws](https://arxiv.org/abs/2403.16952) and [Scaling Laws for Optimal Data Mixtures](https://arxiv.org/abs/2507.09404) both fit on sub-1B runs and predict the 8B optimum; RegMix validated 1M-param/1B-token proxies → 1B/25B. *Caveat we own:* our nano runs ~1.3 tok/param, far under RegMix's ~1000, so we trust only large rank gaps, not absolute losses.
+Arm B resolves the fork the spec deliberately leaves open. Small→large mixture transfer is not an assumption here but a published, validated method: [Data Mixing Laws](https://arxiv.org/abs/2403.16952) and [Scaling Laws for Optimal Data Mixtures](https://arxiv.org/abs/2507.09404) both fit on sub-1B runs and predict the 8B optimum; RegMix validated 1M-param/1B-token proxies → 1B/25B. *Caveat:* the nano runs ~1.3 tok/param, far under RegMix's ~1000, so only large rank gaps are trusted, not absolute losses.
 
-### 9.2 The nano-proxy we ran
+### 9.2 The nano-proxy run
 
 A **7.5M-param decoder (24K BPE) × 10M tokens** on a MacBook (MPS): **6 lanes** (web · code · math · reasoning · Indic-native · Indic-translated) with **Indic split over {Hindi, Bengali, Tamil}**, so results are per-language rather than a Hindi average. **24 design runs** (H_A×3 seeds · H_B×3 seeds · 18 Dirichlet) + **Arm E** (reasoning 0/4/8%) + 2 out-of-sample confirmations. Composite + 90% collapse guard as §9.1; normalizer = best per-lane loss over design runs. It exercises the **offline** mixture layer only, not the §5 online selector; it is a **rank signal**, not a 40B number. Code + artifacts: [`proxy/v2/`](proxy/v2/README.md).
 
@@ -205,17 +205,17 @@ Holding everything else fixed, more Indic scores higher, but the composite margi
 
 The lever on native quality is **total in-language exposure (native + translated)**, measured across Indo-Aryan and Dravidian. This is *why* the machine-made translated tier is worth funding.
 
-**Result 3: the best mixtures keep Indic but slash web into code + reasoning, so H_A's weakness is an over-fat web lane, not its Indic share.** The regressor's predicted optimum (web .22 / code .37 / reasoning .19 / **Indic ~12%**) was **confirmed at C=0.9534, the highest of any run, no collapse** (Indic native score 0.93, translated 0.92); the best no-collapse observed run `mix15` (Indic 19%, code 32%) reproduced within **0.0003** on a fresh seed, so these optima are stable. But the driver is *not* less Indic (holding code/reasoning fixed, H_A's 22% still beats H_B's 13%, Result 1). The high-scoring mixtures all **cut web (H_A's 50% → ~19–26%) into code (18%→32–37%) and reasoning (4%→6–19%)**, while keeping Indic in the no-collapse band (**~10–33%, so 22% is safe**); push the other way and **60% Indic (`mix12`) collapses code/math/reasoning**. So the proxy's message about H_A is precise: **it over-funds web and under-funds code/reasoning** (consistent with Arm E). *(Caveat: the composite rewards lanes whose loss is still improvable and is near-flat on lanes at their floor, so "cut web" may under-value web's downstream knowledge (MMLU/ARC) exactly as it under-values Indic identity. A 1B hypothesis, not a mandate.)*
+**Result 3: the best mixtures keep Indic but slash web into code + reasoning, so H_A's weakness is an over-fat web lane, not its Indic share.** The regressor's predicted optimum (web .22 / code .37 / reasoning .19 / **Indic ~12%**) was **confirmed at C=0.9534, the highest of any run, no collapse** (Indic native score 0.93, translated 0.92); the best no-collapse observed run `mix15` (Indic 19%, code 32%) reproduced within **0.0003** on a fresh seed, so these optima are stable. But the driver is *not* less Indic (holding code/reasoning fixed, H_A's 22% still beats H_B's 13%, Result 1). The high-scoring mixtures all **cut web (H_A's 50% → ~19–26%) into code (18%→32–37%) and reasoning (4%→6–19%)**, while keeping Indic in the no-collapse band (**~10–33%, so 22% is safe**); push the other way and **60% Indic (`mix12`) collapses code/math/reasoning**. So the proxy's message about H_A is precise: **it over-funds web and under-funds code/reasoning** (consistent with Arm E) — which **§1 now corrects** (web 45→39, code 16→20, reasoning 4→6). *(Caveat: the composite rewards lanes whose loss is still improvable and is near-flat on lanes at their floor, so "cut web" may under-value web's downstream knowledge (MMLU/ARC) exactly as it under-values Indic identity. A 1B hypothesis, not a mandate.)*
 
 **Result 4 (Arm E): the reasoning lane earns its tokens, and 4% looks a touch low.** With all else fixed, raising reasoning 0 → 4 → 8% lifts the reasoning-lane score **0.73 → 0.87 → 0.91** and the composite monotonically (**0.920 → 0.936** across the range). But at the plan's **4% the lane is still below the 0.90 guard** (0.87), clearing only at 8%. A signal to **consider 4→~6%**, tested properly at 1B.
 
-**What the nano proves, and what we'd do with it.** It ranks *aggregate mixture ratios* only, not the curriculum (§6), the anneal (§5), or any 40B number. What it earns is a signed direction: had the 1B/3B proxy (§9.1) confirmed it, we would **trim web (45→~40%), raise code (16→~18–20%) and reasoning (4→~6%), hold Indic at its 22% floor, and re-run the honesty ledger (§2).** We leave §1 unchanged pending that run, and record the intended move so a reviewer sees exactly what evidence would change what number. **Arm B at 3B remains what settles the 22-vs-13 Indic fork.**
+**What the nano proves, and what it changed.** It ranks *aggregate mixture ratios* only — not the curriculum (§6), the anneal (§5), or any 40B number — and it runs on a proxy far smaller than the 1B/3B runs that would validate it at scale. What it earns is a signed direction, and **§1 now applies it: web trimmed 45→39%, code raised 16→20%, reasoning 4→6%, Indic held at 22%** (the floor the native-loss signal defends), with the §2 ledger re-run to match. Committing on nano-scale evidence is deliberate — and it is recorded that **the 22-vs-13 Indic fork is what a 1B/3B run (§9.1), Arm B especially, would settle: the validation this spec designs but cannot run on the compute available here.**
 
 ---
 
 ## 10. Starved slots (spec-only)
 
-The five ledger-confirmed starved slots each get one honest fix; **running it is the team's parallel track, not this week's scope**, and the cumulative gating threshold is a course number not yet known to us.
+The five ledger-confirmed starved slots each get one honest fix; **running it is the team's parallel track, not this week's scope**, and the cumulative gating threshold is a course number not yet known here.
 
 | Slot | Fix | Named pipeline | Success metric |
 |---|---|---|---|
@@ -233,10 +233,10 @@ The key limit: **cleaning raises native Indic ~1.3–1.5×, never to lane scale*
 
 - **~95% of the Indic lane is generated/repeated.** Stated, tiered, gated, not hidden. Whether 22%-of-mostly-generated beats a smaller high-density lane is **Arm B**; the nano's multi-seed trilingual signal *modestly* favors H_A (on native loss).
 - **Floor values, anneal row sizes, per-stage weights, H_B's 13%, and the proxy decision thresholds are design proposals**, flagged provisional-until-proxy, not cited facts. Supply numbers, benchmark ties, and epoch precedents *are* sourced.
-- **The composite-metric weights** (Indic .30 / code .25 / math+reasoning .20 / English .15 / agentic .10) are my renormalization of the capability ranking, not a sourced fact, and the nano-proxy verdict rides on them.
+- **The composite-metric weights** (Indic .30 / code .25 / math+reasoning .20 / English .15 / agentic .10) are a renormalization of the capability ranking, not a sourced fact, and the nano-proxy verdict rides on them.
 - **The nano-proxy is a 7.5M-param rank signal**, folds the 8 lanes to 6 (agentic/science/india-first folded into others), and measures Indic across 3 languages at ~1.3 tok/param. It is proof-of-method, not evidence for the 40B numbers.
 - **Long-context is mostly English/code**; Indic long-doc depth is not something this data can honestly promise.
-- **Kashmiri/Dogri/Santali get script coverage, not capability.** We do not claim fluency we cannot fund.
+- **Kashmiri/Dogri/Santali get script coverage, not capability.** This spec claims no fluency it cannot fund.
 
 ---
 
