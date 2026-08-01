@@ -6,7 +6,7 @@
 
 ---
 
-## 0. Method: reverse-engineer the inventory, then refuse to lie about it
+## 0. Method
 
 The mixture is **not** a survey of available data. It is a reverse projection of the capabilities we have decided the model must win, ranked, each tied to the benchmark that measures it:
 
@@ -23,11 +23,11 @@ The mixture is **not** a survey of available data. It is a reverse projection of
 
 Six steps: rank capabilities → set a defended share per lane → convert share to tokens-needed → posit real *unique* supply → compute the gap (repetition epochs and/or synthesis %) → read off the starved slots.
 
-**The anti-wishful-accounting rule (the whole point):** every share that exceeds its plausible real unique supply must say so and name its filler: epochs or synthesis. *A lane handed a large share with almost no real data behind it is a defect, not a decision.* We would rather write "55% of the Indic lane is hard-gated translation" than bury it inside a 22% headline.
+**The anti-wishful-accounting rule:** every share that exceeds its plausible real unique supply must say so and name its filler: epochs or synthesis. A lane handed a large share with almost no real data behind it is a defect, not a decision. We state, for example, that ~55% of the Indic lane is hard-gated translation rather than hiding it inside the 22% headline.
 
 ---
 
-## 1. The pre-training lane table (hypothesis H_A)
+## 1. The pre-training mixture
 
 **H_A and H_B** name the two candidate Indic-lane sizes the spec deliberately leaves open. **H_A** ("Hypothesis A") is this table's headline bet: **22% Indic**. **H_B** is a leaner rival: **13% Indic**, saving scarce native tokens for the anneal (§5). They differ *only* in the Indic share (the rest goes to web). The nano-proxy (§9.2) tests these aggregate ratios; it supports 22% > 13% and flags web as over-funded relative to code/reasoning, but **only Arm B at 3B settles the fork.**
 
@@ -52,7 +52,7 @@ Long-context is deliberately **not a lane**: it is a late re-pack of already-cou
 
 ---
 
-## 2. The honesty ledger: every lane against real supply
+## 2. The supply ledger
 
 | Lane | Needed | Real unique supply | Epochs | Synthesis (named) | Verdict |
 |---|---|---|---|---|---|
@@ -69,7 +69,7 @@ Long-context is deliberately **not a lane**: it is a late re-pack of already-cou
 
 ---
 
-## 3. The Indic split across five tiers (the centerpiece)
+## 3. The Indic split (five tiers)
 
 The 22% headline hides a **UniMax epoch cap**: native tokens repeat ≤~4× before overfitting, so the native floor caps out far below 3.3T and the rest is *openly* generated. The lane splits into five tiers, each with its gate (sums to 3.3T):
 
@@ -110,7 +110,7 @@ Each of the assignment's named slots is sized per stage and pointed at the datas
 
 Floors are **UniMax-consistent**: satisfied by capped-epoch native + gated translated, *never* by exceeding a per-language epoch cap.
 
-**The nano-proxy makes this floor load-bearing, not decorative (§9.2).** A mixture with Indic at ~5% total (native only 3%, `mix02`) **collapsed both Indic lanes** (native score **0.896**, translated **0.875**, both under the 0.90 guard), while **8% native stayed safe (score 0.94–0.95)**. So there is a real collapse cliff just below the plan's floor. An unconstrained OPUS-style utility selector, which deprioritizes high-loss/slow-improving lanes, would drive Indic straight off that cliff; the **≥8% always-on native floor is precisely what stops it.** (The nano shows the *failure mode* that motivates the floor; that the floor+selector loop actually holds is still assumed, not tested, §11 #8.)
+**The nano-proxy makes this floor load-bearing, not decorative (§9.2).** A mixture with Indic at ~5% total (native only 3%, `mix02`) **collapsed both Indic lanes** (native score **0.896**, translated **0.875**, both under the 0.90 guard), while **8% native stayed safe (score 0.94–0.95)**. So there is a real collapse cliff just below the plan's floor. An unconstrained OPUS-style utility selector, which deprioritizes high-loss/slow-improving lanes, would drive Indic straight off that cliff; the **≥8% always-on native floor is precisely what stops it.** (The nano shows the *failure mode* that motivates the floor; that the floor+selector loop actually holds is still assumed, not tested.)
 
 **The anneal reserve:** the final **~10% ≈ 1.5T tokens** (tail of S4), LR→0, checkpoint-averaged; the Llama-3 recipe that bought **+24% GSM8k / +6.4% MATH at 8B**. This is identity-setting, so the scarcest asset is spent here near-fresh:
 
@@ -127,7 +127,7 @@ Floors are **UniMax-consistent**: satisfied by capped-epoch native + gated trans
 
 ---
 
-## 6. The curriculum: per-stage weights (the growth schedule *is* the curriculum)
+## 6. The curriculum (per-stage weights)
 
 Stage token budgets (stated assumption): S0 ~0.5T · S1 ~1.5T · S2 ~4T · S3 ~5T · S4 ~4T (incl. the 1.5T anneal) = 15T. Trajectory: **bilingual foundation (S0–S1) → capability core (S2) → Indic pivot (S3) → India-first anneal (S4)**, English code/math replayed throughout.
 
@@ -146,7 +146,7 @@ Token-weighted average recovers H_A within ~0.4pp on every lane; floors honored 
 
 ---
 
-## 7. Difficulty & reasoning-length bands (with worked examples)
+## 7. Difficulty & reasoning-length bands
 
 Difficulty is **measured**, per lane: web = FineWeb-Edu score 0–5; math = pass-rate; code = task-shape ladder; Indic = tier × KenLM-perplexity. **Reasoning-length bands: short <1K / medium 1–4K / long 4–16K** (OpenThoughts mean ≈11.6K); pretrain carries short+medium broadly, the long band is reserved for SFT/anneal. A worked example sits in every band, a sample rather than an adjective:
 
@@ -167,9 +167,9 @@ Band-to-schedule mapping: easy-broad-early → hard+long-late, with a Goldilocks
 
 ---
 
-## 9. A data decision is a hypothesis until a cheap experiment tests it
+## 9. Proxy validation
 
-### 9.1 The 1B/3B proxy program (the spec's precondition for 40B)
+### 9.1 The 1B/3B proxy program
 
 No share is trusted at 40B until a proxy has tested it. Five arms, each with a named confirm/refute rule, optimizing a **composite metric** (Indic .30 / code .25 / math+reasoning .20 / English .15 / agentic .10) under a **no-collapse guard** (no lane below 90% of its best) so a single-objective fit can't quietly trade Indic away:
 
@@ -183,7 +183,7 @@ No share is trusted at 40B until a proxy has tested it. Five arms, each with a n
 
 Arm B resolves the fork the spec deliberately leaves open. Small→large mixture transfer is not our assumption but a published, validated method: [Data Mixing Laws](https://arxiv.org/abs/2403.16952) and [Scaling Laws for Optimal Data Mixtures](https://arxiv.org/abs/2507.09404) both fit on sub-1B runs and predict the 8B optimum; RegMix validated 1M-param/1B-token proxies → 1B/25B. *Caveat we own:* our nano runs ~1.3 tok/param, far under RegMix's ~1000, so we trust only large rank gaps, not absolute losses.
 
-### 9.2 The nano-proxy we actually ran (proof-of-method, on a MacBook)
+### 9.2 The nano-proxy we ran
 
 A **7.5M-param decoder (24K BPE) × 10M tokens** on a MacBook (MPS): **6 lanes** (web · code · math · reasoning · Indic-native · Indic-translated) with **Indic split over {Hindi, Bengali, Tamil}**, so results are per-language rather than a Hindi average. **24 design runs** (H_A×3 seeds · H_B×3 seeds · 18 Dirichlet) + **Arm E** (reasoning 0/4/8%) + 2 out-of-sample confirmations. Composite + 90% collapse guard as §9.1; normalizer = best per-lane loss over design runs. It exercises the **offline** mixture layer only, not the §5 online selector; it is a **rank signal**, not a 40B number. Code + artifacts: [`proxy/v2/`](proxy/v2/README.md).
 
@@ -194,7 +194,7 @@ A **7.5M-param decoder (24K BPE) × 10M tokens** on a MacBook (MPS): **6 lanes**
 | **H_A: Indic 22%** | **0.9333** (0.9302–0.9362) | **3.549** | 0/3 |
 | H_B: Indic 13% | 0.9292 (0.9280–0.9312) | 3.596 | 0/3 |
 
-Holding everything else fixed, more Indic scores higher, but the composite margin (0.004) sits **inside H_A's own 3-seed spread (0.006)**, so the robust signal is the **native-loss gap** (3.549 vs 3.596, no seed overlap), not the composite ranking. Neither lane collapses (native score 0.95 / 0.94, guard 0.90). So the nano *prefers* H_A but cannot *settle* 22-vs-13 by itself (§11 #1).
+Holding everything else fixed, more Indic scores higher, but the composite margin (0.004) sits **inside H_A's own 3-seed spread (0.006)**, so the robust signal is the **native-loss gap** (3.549 vs 3.596, no seed overlap), not the composite ranking. Neither lane collapses (native score 0.95 / 0.94, guard 0.90). So the nano *prefers* H_A but cannot *settle* 22-vs-13 by itself.
 
 **Result 2: the result holds per-language, and native quality is bought with translated tokens.** H_A and H_B carry the *same* 8% native share and differ only in translated bulk (14% vs 5%), yet cutting it raises native loss in **all three languages, both script families:**
 
@@ -213,7 +213,7 @@ The lever on native quality is **total in-language exposure (native + translated
 
 ---
 
-## 10. Starved slots: where the cleaning/generation effort is aimed (spec-only)
+## 10. Starved slots (spec-only)
 
 The five ledger-confirmed starved slots each get one honest fix; **running it is the team's parallel track, not this week's scope**, and the cumulative gating threshold is a course number not yet known to us.
 
@@ -225,38 +225,15 @@ The five ledger-confirmed starved slots each get one honest fix; **running it is
 | Science | clean-then-gen | peS2o @2–3 epochs + paper-grounded textbook gen *(verifier-light, flagged)* | peS2o consumed + flagged synthetic |
 | India-first | scrape + gen | GODL/§52 scrape + exam/civic QA gen | scrape ceiling harvested |
 
-The load-bearing honesty: **cleaning raises native Indic ~1.3–1.5×, never to lane scale**; the lane stays generation-heavy and the spec says so.
+The key limit: **cleaning raises native Indic ~1.3–1.5×, never to lane scale**; the lane stays generation-heavy and the spec says so.
 
 ---
 
-## 11. Open questions (named, not hidden)
-
-Decisions and numbers that are genuinely unresolved, flagged so a reviewer can see the edges of the spec rather than discover them.
-
-**Design forks still open (proxy- or reviewer-decided):**
-1. **Indic lane size: H_A (22%) vs H_B (13%).** The headline fork. Nano-proxy *prefers* H_A (higher composite + robustly lower native loss across hi/bn/ta, §9.2) but only modestly. **Only Arm B at 3B settles it.**
-2. **Translated-tier tolerance:** how much of the Indic lane can be translation before native quality degrades (drives the 54.5% translated share)? That's **Arm D**, untested.
-3. **Is India-first 3% right?** 0.45T sits far above its tens-of-B scrape ceiling → ~90% generated. Defensible, but a reviewer could argue for shrinking it or doubting generation quality.
-4. **Should the ~15% edu slice be a protected floor?** We carve it but don't guard it in §5.
-
-**Numbers that are proposals, not sourced facts:**
-5. **Composite-metric weights** (Indic .30 / code .25 / math+reasoning .20 / English .15 / agentic .10): my renormalization of the capability ranking; the *entire* nano-proxy verdict rides on them.
-6. **Floor values (8/12/2/0.5%), anneal row sizes, per-stage weights, Arm-B thresholds (1pt / 1.5pt)**: design proposals, provisional-until-proxy.
-7. **FineWeb-2 Indic top-up (~26B):** flagged uncertain; per-language FW2 counts unretrieved, overlaps Sangraha-unverified.
-
-**Limits stated but not resolvable this week:**
-8. **OPUS / online-selection is assumed, not tested.** §5's floor→selector interaction is a design claim adopted from the literature; nothing we ran validates it (the nano-proxy tests the offline layer only).
-9. **Cumulative data-gating threshold:** a course/team number not yet known to us.
-10. **Science synthesis is verifier-light:** a real quality risk, flagged, unfixed.
-11. **Long-context Indic depth:** thin supply; the stitching mitigation is unproven.
-12. **Nano-proxy Indic is measured across Hindi, Bengali, Tamil** (§9.2 R2); the transfer effect holds in all three. The **~0-native languages** (Kashmiri/Dogri/Santali) remain a UniMax assertion, not measured.
-
----
-
-## 12. Honest caveats (the things a reviewer should push on)
+## 11. Caveats
 
 - **~95% of the Indic lane is generated/repeated.** Stated, tiered, gated, not hidden. Whether 22%-of-mostly-generated beats a smaller high-density lane is **Arm B**; the nano's multi-seed trilingual signal *modestly* favors H_A (on native loss).
 - **Floor values, anneal row sizes, per-stage weights, H_B's 13%, and the proxy decision thresholds are design proposals**, flagged provisional-until-proxy, not cited facts. Supply numbers, benchmark ties, and epoch precedents *are* sourced.
+- **The composite-metric weights** (Indic .30 / code .25 / math+reasoning .20 / English .15 / agentic .10) are my renormalization of the capability ranking, not a sourced fact, and the nano-proxy verdict rides on them.
 - **The nano-proxy is a 7.5M-param rank signal**, folds the 8 lanes to 6 (agentic/science/india-first folded into others), and measures Indic across 3 languages at ~1.3 tok/param. It is proof-of-method, not evidence for the 40B numbers.
 - **Long-context is mostly English/code**; Indic long-doc depth is not something this data can honestly promise.
 - **Kashmiri/Dogri/Santali get script coverage, not capability.** We do not claim fluency we cannot fund.

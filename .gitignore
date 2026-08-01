@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+**/.venv/
+
+# Large proxy corpora + tokenized arrays (regenerable via prep/tokenizer/tokenize)
+proxy/data/
+proxy/v2/data/
+
+# Logs
+*.log
+
+# Claude Code local settings
+.claude/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
