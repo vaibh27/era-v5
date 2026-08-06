@@ -1,0 +1,13 @@
+{
+  "measured": {
+    "train_seconds": 8.4366,
+    "tokens_per_sec": 644.8,
+    "useful_loss_bearing_tokens_per_sec": 481.7
+  },
+  "reconstructible": {
+    "steps": 32,
+    "total_tokens_processed": 5440,
+    "loss_bearing_tokens": 4064,
+    "mean_packing_utilization": 0.7117
+  }
+}

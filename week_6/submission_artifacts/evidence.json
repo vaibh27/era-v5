@@ -1,0 +1,137 @@
+{
+  "all_pass": true,
+  "environment": {
+    "python": "3.13.13",
+    "numpy": "2.4.6",
+    "platform": "macOS-26.5.2-arm64-arm-64bit-Mach-O",
+    "seed": 42
+  },
+  "requirements": {
+    "Tokenizer integrity": {
+      "result": "PASS",
+      "evidence": "manifests/36d24c461118674d.json",
+      "detail": {
+        "n_shards": 8,
+        "tokenizer_hash": "c04736094918b298",
+        "input_root_hash": "93e60aaebe98f1ab"
+      }
+    },
+    "Evaluation firewall": {
+      "result": "PASS",
+      "evidence": "ledgers/consumption.jsonl",
+      "detail": {
+        "blocked_eval_shards": 4,
+        "worst_decontam_jaccard": 0.3727,
+        "eval_shards_in_batches": 0
+      }
+    },
+    "Packing correctness": {
+      "result": "PASS",
+      "evidence": "ledgers/consumption.jsonl",
+      "detail": {
+        "cross_doc_attention_leaks": 0,
+        "packs_checked": 85,
+        "mean_utilization": 0.7117
+      }
+    },
+    "Mixture compliance": {
+      "result": "PASS",
+      "evidence": "ledgers/consumption.jsonl",
+      "detail": {
+        "planned_share": {
+          "web": 0.4261,
+          "indic": 0.28,
+          "code": 0.1959,
+          "math": 0.0979
+        },
+        "actual_share": {
+          "web": 0.4038,
+          "code": 0.1553,
+          "math": 0.184,
+          "indic": 0.2569
+        },
+        "floor_breaches": []
+      }
+    },
+    "OPUS audit trail": {
+      "result": "PASS",
+      "evidence": "ledgers/consumption.jsonl",
+      "detail": {
+        "decision_records": 353,
+        "decision_counts": {
+          "defer": 11,
+          "accept": 160,
+          "floor_override": 28,
+          "reject": 154
+        }
+      }
+    },
+    "Learning trace": {
+      "result": "PASS",
+      "evidence": "ledgers/learning.jsonl",
+      "detail": {
+        "loss_first4": 8.7028,
+        "loss_last4": 6.5557,
+        "loss_slope": -0.0489,
+        "lanes_traced": [
+          "code",
+          "indic",
+          "math",
+          "web"
+        ]
+      }
+    },
+    "Throughput": {
+      "result": "PASS",
+      "evidence": "performance.json",
+      "detail": {
+        "measured": {
+          "train_seconds": 8.4366,
+          "tokens_per_sec": 644.8,
+          "useful_loss_bearing_tokens_per_sec": 481.7
+        },
+        "reconstructible": {
+          "steps": 32,
+          "total_tokens_processed": 5440,
+          "loss_bearing_tokens": 4064,
+          "mean_packing_utilization": 0.7117
+        }
+      }
+    },
+    "Crash recovery": {
+      "result": "PASS",
+      "evidence": "checkpoints/ckpt_000020.json",
+      "detail": {
+        "offset": 20,
+        "next_matched": true,
+        "stream_identical": true,
+        "contiguous": true,
+        "expected_hash": "8c4ae7c19bd40e9f",
+        "reference_hash": "8c4ae7c19bd40e9f"
+      }
+    },
+    "Replay": {
+      "result": "PASS",
+      "evidence": "ledgers/consumption.jsonl",
+      "detail": {
+        "interval": [
+          4,
+          16
+        ],
+        "mismatches": 0,
+        "sample_recorded": "47a4bdb34d0b65a5",
+        "sample_replay": "47a4bdb34d0b65a5"
+      }
+    },
+    "Fork": {
+      "result": "PASS",
+      "evidence": "ledgers/fork.json",
+      "detail": {
+        "fork_offset": 10,
+        "diverged": true,
+        "firewall_clean": true,
+        "shared_prefix_len": 10
+      }
+    }
+  }
+}

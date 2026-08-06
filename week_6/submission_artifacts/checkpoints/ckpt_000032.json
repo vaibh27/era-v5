@@ -1,0 +1,7 @@
+{
+  "offset": 32,
+  "seed": 42,
+  "adam_t": 32,
+  "stage": "S2",
+  "next_batch_hash": ""
+}
