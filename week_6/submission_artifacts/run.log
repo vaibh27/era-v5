@@ -1,0 +1,79 @@
+=== TDES: Training Data Execution System — full demonstration ===
+shard_created lane=web split=train id=6e7477114fdf0733 tokens=14702 docs=554
+shard_created lane=web split=eval id=cdaa3a5b976ca01c tokens=1964 docs=76
+shard_created lane=indic split=train id=ec82f9382475c834 tokens=33321 docs=1244
+shard_created lane=indic split=eval id=531c37c0b27859db tokens=5634 docs=209
+shard_created lane=code split=train id=e4fa901df3b6df73 tokens=2178 docs=114
+shard_created lane=code split=eval id=532da15faa764b2b tokens=368 docs=17
+shard_created lane=math split=train id=c3b39f33565cb4a9 tokens=1598 docs=78
+shard_created lane=math split=eval id=36d24c461118674d tokens=235 docs=14
+[PASS] tokenizer_hash_verified c04736094918b298
+[PASS] manifest_validated shards=8 content_ok=True
+[PASS] eval_decontaminated worst_jaccard=0.3727 threshold=0.8 docs=40
+[PASS] eval_shard_blocked blocked_eval_shards=4
+mixture_compiled stages=3 floors={'indic': 0.2} combined_floors=[{'lanes': ['code', 'math'], 'floor': 0.2}] window=8
+checkpoint_interval youngdaly = round(sqrt(2*0.02s*150.0s)/0.25s) = 10 steps (fixed representative constants; run_pipeline measures live)
+-- training --
+step=0 stage=S0 loss=9.2271 util=0.807 batch=df38cd173846
+step=1 stage=S0 loss=9.1182 util=0.758 batch=4be20e999ee7
+step=2 stage=S0 loss=8.6164 util=0.820 batch=c7c77049f167
+step=3 stage=S0 loss=7.8493 util=0.773 batch=f8ff92197672
+step=4 stage=S0 loss=8.1392 util=0.875 batch=47a4bdb34d0b
+step=5 stage=S0 loss=7.6032 util=0.617 batch=1e1c4e83e6b0
+step=6 stage=S0 loss=7.3945 util=0.797 batch=ba9936628a1c
+step=7 stage=S0 loss=7.5662 util=0.859 batch=69c87074dc50
+step=8 stage=S1 loss=8.2991 util=0.703 batch=4d3281a9f6c8
+step=9 stage=S1 loss=6.3484 util=0.773 batch=944f5c2c155b
+[PASS] checkpoint_saved offset=10
+step=10 stage=S1 loss=7.8613 util=0.727 batch=9b817bf6ba24
+step=11 stage=S1 loss=6.9767 util=0.844 batch=75fd7e78b745
+step=12 stage=S1 loss=6.0810 util=0.836 batch=c7322967076e
+step=13 stage=S1 loss=8.0484 util=0.848 batch=ecee5bcd16c5
+step=14 stage=S1 loss=7.3118 util=0.848 batch=816ab23f3981
+step=15 stage=S1 loss=6.5850 util=0.812 batch=6fc9e7372cb5
+step=16 stage=S1 loss=7.5890 util=0.844 batch=dab4dc3e17ce
+step=17 stage=S1 loss=7.6013 util=0.604 batch=bb99190619d7
+step=18 stage=S1 loss=6.7273 util=0.781 batch=a0688ef78337
+step=19 stage=S1 loss=6.4428 util=0.812 batch=e0ca541fd0a3
+[PASS] checkpoint_saved offset=20
+step=20 stage=S2 loss=7.7840 util=0.621 batch=8c4ae7c19bd4
+step=21 stage=S2 loss=6.3304 util=0.438 batch=5ba5d553ebb7
+step=22 stage=S2 loss=6.8259 util=0.625 batch=458827072b8c
+step=23 stage=S2 loss=6.0342 util=0.453 batch=14b38651c450
+step=24 stage=S2 loss=8.5136 util=0.617 batch=530310a34bdc
+step=25 stage=S2 loss=7.6984 util=0.781 batch=19f4381fef08
+step=26 stage=S2 loss=6.1586 util=0.766 batch=18a2d48b25d7
+step=27 stage=S2 loss=9.0633 util=0.766 batch=fef042fe542a
+step=28 stage=S2 loss=4.9391 util=0.422 batch=2c150916ddfd
+step=29 stage=S2 loss=8.6894 util=0.617 batch=2f2341f86e54
+[PASS] checkpoint_saved offset=30
+step=30 stage=S2 loss=4.5195 util=0.312 batch=0cf65dfeaa55
+step=31 stage=S2 loss=8.0746 util=0.617 batch=736842df4940
+[PASS] checkpoint_saved offset=32
+batches_packed steps=32
+opus_decisions_recorded {'defer': 11, 'accept': 160, 'floor_override': 28, 'reject': 154}
+-- crash / resume --
+crash_simulated at_step=20 resumed_from_offset=20
+run_resumed from_offset=20 expected_next_hash=8c4ae7c19bd40e9f
+[PASS] resume_next_batch_matched offset=20 hash=8c4ae7c19bd40e9f
+[PASS] resume_no_skip_or_repeat steps=32
+-- replay --
+historical_stream_replayed interval=[4,16) batches=12
+[PASS] replay_hash_matched interval=[4,16) mismatches=0
+-- fork --
+branch_forked from_offset=10 parent_seed=42 fork_seed=7
+[PASS] fork_diverges_and_valid diverged=True firewall_clean=True steps=6
+-- audit --
+[PASS] tokenizer_integrity -> manifests/36d24c461118674d.json
+[PASS] evaluation_firewall -> ledgers/consumption.jsonl
+[PASS] packing_correctness -> ledgers/consumption.jsonl
+[PASS] mixture_compliance -> ledgers/consumption.jsonl
+[PASS] opus_audit_trail -> ledgers/consumption.jsonl
+[PASS] learning_trace -> ledgers/learning.jsonl
+[PASS] throughput -> performance.json
+[PASS] crash_recovery -> checkpoints/ckpt_000020.json
+[PASS] replay -> ledgers/consumption.jsonl
+[PASS] fork -> ledgers/fork.json
+[PASS] audit_completed all_pass=True
+performance_measured -> performance.json
+=== DONE all_pass=True — artifacts in submission_artifacts/ ===

@@ -1,0 +1,42 @@
+{
+  "content_hash": "36d24c461118674debdd8f976ae4cf2602a6de624d42bc431f6cc68e4194e041",
+  "doc_ids": [
+    "math-0007#0",
+    "math-0007#1",
+    "math-0015#0",
+    "math-0015#1",
+    "math-0023#0",
+    "math-0031#0",
+    "math-0031#1",
+    "math-0039#0",
+    "math-0039#1",
+    "math-0047#0",
+    "math-0047#1",
+    "math-0055#0",
+    "math-0055#1",
+    "math-0063#0"
+  ],
+  "doc_starts": [
+    0,
+    28,
+    30,
+    58,
+    63,
+    89,
+    117,
+    118,
+    146,
+    149,
+    177,
+    180,
+    208,
+    209
+  ],
+  "dtype": "uint16",
+  "lane": "math",
+  "n_docs": 14,
+  "n_tokens": 235,
+  "shard_id": "36d24c461118674d",
+  "split": "eval",
+  "tokenizer_hash": "c04736094918b298cacd3d31bdf1c3e43ee3f4818651e5d5cb9251a86b3cfd0d"
+}
